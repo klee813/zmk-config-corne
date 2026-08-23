@@ -1,0 +1,4 @@
+name: zmk-vfx-sol-corne-status
+build:
+  cmake: .
+  kconfig: Kconfig

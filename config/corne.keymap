@@ -1,217 +1,155 @@
 /*
- * Copyright (c) 2020 The ZMK Contributors
+ * Sol / Luna Corne keymap
  *
- * SPDX-License-Identifier: MIT
+ * Hardware: 42-key foostan Corne, nice!nano-compatible controllers,
+ *           split Bluetooth, NICE!VIEW/OLED status displays.
+ * Host: macOS first; standard HID shortcuts remain portable.
  */
 
-#include <dt-bindings/zmk/pointing.h>
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/mouse.h>
+#include <dt-bindings/zmk/outputs.h>
+#include <dt-bindings/zmk/pointing.h>
 #include <dt-bindings/zmk/rgb.h>
 
-&led_strip { chain-length = <27>; };
+&led_strip {
+    chain-length = <27>;
+};
+
+/* Keep pointer motion usable for both precision and sustained movement. */
+&mmv {
+    time-to-max-speed-ms = <350>;
+    acceleration-exponent = <1>;
+};
+
+/* Scrolling is intentionally slower than pointer motion. */
+&msc {
+    time-to-max-speed-ms = <550>;
+    acceleration-exponent = <0>;
+};
+
+/* A quick tap is Escape; holding and pressing another key enters NAV. */
+&lt {
+    tapping-term-ms = <300>;
+    flavor = "hold-preferred";
+};
 
 / {
     behaviors {
-        hm: hm {
+        /* Tap = Caps Lock; hold = Left Shift. */
+        caps_shift: caps_shift {
             compatible = "zmk,behavior-hold-tap";
-            label = "HM";
-            bindings = <&kp>, <&kp>;
-
+            display-name = "CAPS_SHIFT";
+            bindings = <&kp>, <&caps_lock_pulse>;
             #binding-cells = <2>;
-            tapping-term-ms = <150>;
-            flavor = "tap-preferred";
-        };
-
-        bs_del: bs_del {
-            compatible = "zmk,behavior-mod-morph";
-            label = "BS_DEL";
-            bindings = <&kp BACKSPACE>, <&kp DEL>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LGUI|MOD_RGUI)>;
-        };
-
-        nav_hm_mkp: nav_hm_mkp {
-            compatible = "zmk,behavior-hold-tap";
-            label = "NAV_HM_MKP";
-            bindings = <&mkp>, <&kp>;
-
-            #binding-cells = <2>;
-            tapping-term-ms = <100>;
-            flavor = "tap-preferred";
-        };
-
-        nav_hm_mmv: nav_hm_mmv {
-            compatible = "zmk,behavior-hold-tap";
-            label = "NAV_HM_MMV";
-            bindings = <&mmv>, <&kp>;
-
-            #binding-cells = <2>;
-            tapping-term-ms = <100>;
-            flavor = "tap-preferred";
-        };
-
-        nav_mouse_up: nav_mouse_up {
-            compatible = "zmk,behavior-mod-morph";
-            label = "NAV_MOUSE_UP";
-            bindings = <&nav_hm_mmv MOVE_UP UP_ARROW>, <&msc SCRL_UP>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LSFT)>;
-            keep-mods = <(MOD_LSFT)>;
-        };
-
-        nav_mouse_down: nav_mouse_down {
-            compatible = "zmk,behavior-mod-morph";
-            label = "NAV_MOUSE_DOWN";
-            bindings = <&nav_hm_mmv MOVE_DOWN DOWN>, <&msc SCRL_DOWN>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LSFT)>;
-            keep-mods = <(MOD_LSFT)>;
-        };
-
-        nav_hm_home: nav_hm_home {
-            compatible = "zmk,behavior-mod-morph";
-            label = "NAV_HM_HOME";
-            bindings = <&mkp LCLK>, <&kp HOME>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LSFT)>;
-        };
-
-        nav_hm_end: nav_hm_end {
-            compatible = "zmk,behavior-mod-morph";
-            label = "NAV_HM_END";
-            bindings = <&mkp RCLK>, <&kp END>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LSFT)>;
-        };
-
-        qwerty_n_left: qwerty_n_left {
-            compatible = "zmk,behavior-mod-morph";
-            label = "QWERTY_N_LEFT";
-            bindings = <&kp N>, <&kp LEFT>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LALT)>;
-            keep-mods = <(MOD_LALT)>;
-        };
-
-        qwerty_m_down: qwerty_m_down {
-            compatible = "zmk,behavior-mod-morph";
-            label = "QWERTY_M_DOWN";
-            bindings = <&kp M>, <&kp DOWN_ARROW>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LALT)>;
-            keep-mods = <(MOD_LALT)>;
-        };
-
-        qwerty_comma_right: qwerty_comma_right {
-            compatible = "zmk,behavior-mod-morph";
-            label = "QWERTY_COMMA_RIGHT";
-            bindings = <&kp COMMA>, <&kp RIGHT>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LALT)>;
-            keep-mods = <(MOD_LALT)>;
-        };
-
-        qwerty_hm_j_up: qwerty_hm_j_up {
-            compatible = "zmk,behavior-mod-morph";
-            label = "QWERTY_HM_J_UP";
-            bindings = <&hm RIGHT_ALT J>, <&kp UP>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LALT)>;
-            keep-mods = <(MOD_LALT)>;
-        };
-
-        qwerty_hm_h_home: qwerty_hm_h_home {
-            compatible = "zmk,behavior-mod-morph";
-            label = "QWERTY_HM_H_HOME";
-            bindings = <&hm RIGHT_GUI H>, <&kp HOME>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LALT)>;
-            keep-mods = <(MOD_LALT)>;
-        };
-
-        qwerty_hm_k_end: qwerty_hm_k_end {
-            compatible = "zmk,behavior-mod-morph";
-            label = "QWERTY_HM_K_END";
-            bindings = <&hm RCTRL K>, <&kp END>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LALT)>;
-            keep-mods = <(MOD_LALT)>;
+            tapping-term-ms = <300>;
+            flavor = "hold-preferred";
         };
     };
 
-    combos { compatible = "zmk,combos"; };
+    macros {
+        /* macOS deliberately ignores an accidental, near-zero Caps Lock pulse. */
+        caps_lock_pulse: caps_lock_pulse {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            tap-ms = <150>;
+            bindings = <&kp CAPSLOCK>;
+        };
+
+        /* Open Codex's model picker without confirming a selection. */
+        open_model_picker: open_model_picker {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <15>;
+            bindings = <&kp SLASH &kp M &kp O &kp D &kp E &kp L>;
+        };
+
+        /* Manual confirmation with Enter is intentional and required. */
+        prepare_compact: prepare_compact {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <15>;
+            bindings = <&kp SLASH &kp C &kp O &kp M &kp P &kp A &kp C &kp T>;
+        };
+    };
 
     keymap {
         compatible = "zmk,keymap";
 
-        QWERTY {
-            // -----------------------------------------------------------------------------------------
-            // |  TAB |  Q  |  W  |  E  |  R  |  T  |   |  Y  |  U   |  I  |  O  |  P  | BKSP |
-            // | CTRL |  A  |  S  |  D  |  F  |  G  |   |  H  |  J   |  K  |  L  |  ;  |  '   |
-            // | SHFT |  Z  |  X  |  C  |  V  |  B  |   |  N  |  M   |  ,  |  .  |  /  | SHFT |
-            //                    | GUI | LWR | ENT |   | SPC | RSE  | ALT |
-
+        BASE {
+            display-name = "BASE";
+            // | TAB | Q | W | E | R | T |   | Y | U | I | O | P | BSPC |
+            // | CAPS/SHIFT | A | S | D | F | G | H | J | K | L | ; | ' |
+            // | CTRL | Z | X | C | V | B | N | M | , | . | / | RSHIFT |
+            //                 | CMD | NAV | SPC | ENT | NUM | OPT |
             bindings = <
-&kp TAB     &kp Q  &kp W  &kp E                 &kp R           &kp T             &kp Y              &kp U            &kp I                &kp O    &kp P     &bs_del
-&caps_word  &kp A  &kp S  &hm LCTRL D           &hm LEFT_ALT F  &hm LEFT_GUI G    &qwerty_hm_h_home  &qwerty_hm_j_up  &qwerty_hm_k_end     &kp L    &kp SEMI  &kp SQT
-&kp LSHFT   &kp Z  &kp X  &kp C                 &kp V           &kp B             &qwerty_n_left     &qwerty_m_down   &qwerty_comma_right  &kp DOT  &kp FSLH  &kp RSHFT
-                          &kp LS(LA(LC(LGUI)))  &to 1           &kp SPACE         &kp RET            &to 2            &kp ESCAPE
+                &kp TAB       &kp Q          &kp W          &kp E          &kp R          &kp T
+                &kp Y         &kp U          &kp I          &kp O          &kp P          &kp BSPC
+                &caps_shift LSHFT 0          &kp A          &kp S          &kp D          &kp F          &kp G
+                &kp H         &kp J          &kp K          &kp L          &kp SEMI        &kp SQT
+                &kp LCTRL     &kp Z          &kp X          &kp C          &kp V          &kp B
+                &kp N         &kp M          &kp COMMA      &kp DOT        &kp FSLH        &kp RSHFT
+                                             &kp LGUI      &lt 1 ESC      &kp SPACE
+                &kp RET       &mo 2          &kp LALT
             >;
         };
 
         NAV {
-            // -----------------------------------------------------------------------------------------
-            // |  TAB |  1    |  2  |  3  |  4  |  5  |   |  6  |  7  |  8  |  9  |  0  | BKSP |
-            // | LCTRL| BTCLR | BT0 | BT1 | BT2 | BT3 |   | LFT | DWN |  UP | RGT |     |      |
-            // | ESC  |       | HOME| PGUP| PGDN| END |   |     |     |     |     |     |      |
-            //                      | GUI |     | SPC |   | ENT |     | ALT |
-
+            display-name = "NAV";
+            // Left: Q/E click, W/A/S/D pointer, R/F vertical scroll, T/G horizontal scroll.
+            // Right: conventional navigation cluster plus approved editing reserves.
             bindings = <
-&kp TAB     &kp N1  &kp N2  &kp N3                &kp N4        &kp N5       &kp N6                      &kp N7           &kp N8                        &kp N9            &kp N0             &bs_del
-&caps_word  &trans  &trans  &kp LCTRL             &kp LEFT_ALT  &kp LGUI     &nav_hm_home                &nav_mouse_up    &nav_hm_end                   &kp LEFT_BRACKET  &kp RIGHT_BRACKET  &kp NON_US_BACKSLASH
-&kp LSHIFT  &trans  &trans  &trans                &trans        &trans       &nav_hm_mmv MOVE_LEFT LEFT  &nav_mouse_down  &nav_hm_mmv MOVE_RIGHT RIGHT  &kp COMMA         &kp PERIOD         &kp RIGHT_SHIFT
-                            &kp LS(LA(LC(LGUI)))  &to 0         &kp SPACE    &kp RET                     &trans           &kp ESC
+                &kp ESC       &mkp LCLK     &mmv MOVE_UP  &mkp RCLK     &msc SCRL_UP  &msc SCRL_LEFT
+                &kp INS       &kp HOME      &kp PG_UP     &kp LG(LEFT)   &kp LG(RIGHT)  &kp BSPC
+                &kp LCTRL     &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_RIGHT &msc SCRL_DOWN &msc SCRL_RIGHT
+                &kp DELETE    &kp END       &kp PG_DN     &kp UP         &kp LA(BSPC)   &kp ESC
+                &kp LSHIFT    &kp K_BACK    &mkp MCLK      &kp K_FORWARD  &none         &none
+                &kp LA(LEFT)  &kp LA(RIGHT) &kp LEFT      &kp DOWN       &kp RIGHT      &kp LSHIFT
+                                             &kp LGUI      &mo 1          &kp SPACE
+                &kp RET       &mo 2          &kp LALT
             >;
         };
 
-        SYMB {
-            // -----------------------------------------------------------------------------------------
-            // |  TAB |   !   |   @   |   #   |   $   |   %   |   |  ^  |  &  |  *  |  (  |  )  | BKSP |
-            // | CTRL |RGB_TOG|RGB_HUI|RGB_SAI|RGB_VAI|       |   |  -  |  =  |  [  |  ]  |  \  |  `   |
-            // | SHFT |RGB_MOD|RGB_HUD|RGB_SAD|RGB_VAD|QK_BOOT|   |  _  |  +  |  {  |  }  | "|" |  ~   |
-            //                            | GUI |     |  SPC  |   | ENT |     | ALT |
-
+        NUM {
+            display-name = "NUM";
+            // Upper row is the agreed 1–5 / 6–0 split. Lower rows provide symbols.
             bindings = <
-&kp TAB     &kp EXCL  &kp AT  &kp HASH              &kp DLLR      &kp PRCNT       &kp CARET  &kp AMPS   &kp KP_MULTIPLY  &kp LPAR  &kp RPAR  &bs_del
-&caps_word  &trans    &trans  &kp LCTRL             &kp LEFT_ALT  &kp LEFT_GUI    &kp MINUS  &kp EQUAL  &kp LBKT         &kp RBKT  &kp BSLH  &kp GRAVE
-&kp LSHFT   &trans    &trans  &trans                &trans        &trans          &kp UNDER  &kp PLUS   &kp LBRC         &kp RBRC  &kp PIPE  &kp TILDE
-                              &kp LS(LA(LC(LGUI)))  &to 0         &kp SPACE       &kp RET    &trans     &kp ESC
+                &kp TAB       &kp N1        &kp N2        &kp N3        &kp N4        &kp N5
+                &kp N6        &kp N7        &kp N8        &kp N9        &kp N0        &kp BSPC
+                &kp LCTRL     &kp EXCL      &kp AT        &kp HASH       &kp DLLR      &kp PRCNT
+                &kp CARET     &kp AMPS      &kp ASTERISK  &kp LPAR       &kp RPAR      &kp SQT
+                &kp LSHIFT    &kp UNDER     &kp EQUAL     &kp PLUS       &kp MINUS     &kp FSLH
+                &kp LBKT      &kp RBKT      &kp LBRC      &kp RBRC       &kp BSLH       &kp PIPE
+                                             &kp LGUI      &mo 1          &kp SPACE
+                &kp RET       &mo 2          &kp LALT
             >;
         };
 
-        CTRL {
+        NPAD_SYS {
+            display-name = "NPAD/SYS";
+            // Left SYS: output, five direct Bluetooth profiles, media, and Vibe controls.
+            // Right: calculator-style keypad while both layer thumbs are held.
             bindings = <
-&kp TAB         &bt BT_CLR_ALL   &bt BT_SEL 0     &bt BT_SEL 1          &bt BT_SEL 2     &bt BT_SEL 3    &trans   &trans  &trans   &trans  &trans  &bs_del
-&caps_word      &rgb_ug RGB_TOG  &rgb_ug RGB_HUI  &rgb_ug RGB_SAI       &rgb_ug RGB_BRI  &trans          &trans   &trans  &trans   &trans  &trans  &trans
-&kp LEFT_SHIFT  &rgb_ug RGB_EFF  &rgb_ug RGB_HUD  &rgb_ug RGB_SAD       &rgb_ug RGB_BRD  &trans          &trans   &trans  &trans   &trans  &trans  &trans
-                                                  &kp LA(LS(LC(LGUI)))  &to 0            &kp SPACE       &kp RET  &trans  &kp ESC
+                &out OUT_TOG  &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4
+                &kp ESC       &kp KP_N7    &kp KP_N8      &kp KP_N9      &kp KP_DIVIDE  &kp BSPC
+                &kp C_MUTE    &kp C_PREV   &kp C_VOL_DN   &kp C_PP       &kp C_VOL_UP   &kp C_NEXT
+                &kp LPAR      &kp KP_N4    &kp KP_N5      &kp KP_N6      &kp KP_MULTIPLY &kp KP_ENTER
+                &rgb_ug RGB_TOG &kp F18     &kp F19        &kp F20        &open_model_picker &prepare_compact
+                &kp RPAR      &kp KP_N1    &kp KP_N2      &kp KP_N3      &kp KP_MINUS   &kp KP_PLUS
+                                             &kp LGUI      &trans         &kp SPACE
+                &kp KP_N0     &trans        &kp KP_DOT
             >;
         };
     };
 
-    conditional_layers { compatible = "zmk,conditional-layers"; };
+    conditional_layers {
+        compatible = "zmk,conditional-layers";
+
+        npad_sys_layer {
+            if-layers = <1 2>;
+            then-layer = <3>;
+        };
+    };
 };
