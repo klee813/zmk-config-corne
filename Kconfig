@@ -1,0 +1,13 @@
+# Display defaults normally implied by ZMK's built-in status screen must be
+# retained when this module replaces that screen with the Caps-aware version.
+
+config ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
+    imply LV_USE_THEME_MONO if LV_Z_BITS_PER_PIXEL=1
+    imply ZMK_WIDGET_LAYER_STATUS
+    imply ZMK_WIDGET_BATTERY_STATUS
+    imply ZMK_WIDGET_OUTPUT_STATUS
+    imply ZMK_WIDGET_PERIPHERAL_STATUS
+
+config LV_Z_MEM_POOL_SIZE
+    default 8192 if ZMK_DISPLAY_STATUS_SCREEN_CUSTOM && ZMK_SPLIT_ROLE_CENTRAL
+    default 4096 if ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
