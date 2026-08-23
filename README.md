@@ -2,6 +2,8 @@
 
 This branch is the locally executed implementation of the approved Corne plan. It targets a 42-key foostan Corne with nice!nano-compatible controllers and a macOS-first workflow.
 
+The approved, not-yet-implemented v1.1 AI control-surface design and its passing criteria are documented in [`docs/ai-control-surface-v1.1.md`](docs/ai-control-surface-v1.1.md). The validated behavior described below remains the immutable v1.0.0 baseline.
+
 ## Safety status
 
 The configuration has been compiled and the normal left/right images have been flashed and validated. The settings-reset image has not been flashed; nothing has been pushed or erased, and the existing Bluetooth pairing was preserved. The original repository commit remains available as the rollback baseline.
